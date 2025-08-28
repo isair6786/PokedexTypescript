@@ -1,0 +1,38 @@
+{
+  "name": "pokedextypescript",
+  "version": "1.0.0",
+  "description": "Project to improve skills",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --watch src --exec ts-node src/index.ts",
+    "dev_api": "nodemon --watch src --exec ts-node src/index.ts --api",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "author": "Kevin Mendoza",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.2.0",
+    "@types/slug": "^5.0.9",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.0",
+    "slug": "^9.0.0"
+  }
+}
