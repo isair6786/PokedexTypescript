@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { } from "../utils/pokeApiHttp";
-import { getAllPokemonById, getEvolvingChainById, getPokemonById, getPokemonByName, getUrlChainEvolution } from "../services/pokemonService";
+import { getAllPokemonById, getEvolvingChainById, getPokemonById, getPokemonByName, getPokemonSpeciesById, getUrlChainEvolution } from "../services/pokemonService";
 import { IPokemon, SpriteMap } from "../interfaces/pokemonInterface";
 import { all } from "axios";
 import { IResponse } from '../interfaces/responseType';
@@ -10,7 +10,14 @@ export const findPokemonById = async (req: Request, res: Response) => {
     try {
         const pokemonId: number = Number.parseInt(req.query.idPokemon.toString());
         const rawPokemonData = await getPokemonById(pokemonId) as any
-        const pokemonData = await formatPokemonData(rawPokemonData)
+        const rawGenera = await getPokemonSpeciesById(pokemonId) as any
+        const formatGenera = rawGenera.genera.find((g) => g.language.name === "en")?.genus ?? "";
+
+        const { flavor_text: descriptionPokemon } = rawGenera.flavor_text_entries.filter(
+            (entry) => entry.language.name === "en" && entry.version.name === "black"
+        )?.[0] ?? '';
+
+        const pokemonData = await formatPokemonData({ ...rawPokemonData, genera: formatGenera ,descriptionPokemon})
         res.status(200).json(pokemonData)
         return;
     } catch (error) {
@@ -105,11 +112,11 @@ export const getEvolvingChainbyPokemonId = async (req: Request, res: Response) =
                 const urls = await getImagesUrlbyPokemonName(pokemonDetail.pokemon);
                 return {
                     ...pokemonDetail,
-                    ImagesUrls:urls
+                    ImagesUrls: urls
                 };
             })
         );
-       
+
         res.status(200).json({
             completeEvolvingChain
         })
@@ -180,19 +187,22 @@ const cleanObject = (obj: Object) => {
     return obj
 }
 const formatPokemonData = async (rawPokemonData: any) => {
-    const { abilities, cries, id, name, heigth, weight, types, sprites: { versions } } = rawPokemonData
-    const abilitiesArray = abilities.map((data) => { return data.ability.name })
+    const { abilities, cries, id, name, genera,descriptionPokemon, height,weight, types, sprites: { versions } } = rawPokemonData
+    const abilitiesArray = abilities.map((data) => { return { "name": data.ability.name, "isHidden": data.is_hidden } })
     const typesArray = types.map(({ type }) => { return type.name })
     const imagesArray: SpriteMap = versions["generation-v"]["black-white"]["animated"]
+
     const pokemonData: IPokemon = {
         cries: cries.latest,
         abilities: abilitiesArray,
-        heigth,
         image: imagesArray,
         name,
         pokedexNumber: id,
         types: typesArray,
-        weight
+        weight,
+        genera,
+        descriptionPokemon,
+        height
     }
     return pokemonData;
 }

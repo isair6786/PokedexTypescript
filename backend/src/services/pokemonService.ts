@@ -10,6 +10,15 @@ export const getPokemonById = async (id:number) => {
     }
     
 }
+export const getPokemonSpeciesById = async (id:number) => {
+    try {
+        return await httpPokeApi.get(`/pokemon-species/${id}`)
+    } catch (error ) {
+        console.log(error.message)
+        return null;
+    }
+    
+}
 export const getPokemonByName = async (pokemonName:string) => {
     try {
         return await httpPokeApi.get(`/pokemon/${pokemonName}`)

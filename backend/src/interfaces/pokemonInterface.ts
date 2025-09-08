@@ -1,14 +1,17 @@
 
 export interface IPokemon {
     cries: string
-    abilities: [string]
-    heigth: number
+    abilities: string[]
     image: SpriteMap
     name: string
     pokedexNumber: number
-    types: [string]
+    types: string[]
     weight: number
+    genera:string,
+    descriptionPokemon:string
+    height:number
 }
 export interface SpriteMap {
     [key: string]: string | null;
 }
+
