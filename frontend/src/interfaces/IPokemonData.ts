@@ -9,9 +9,18 @@ export interface IPokemon {
   genera: string,
   descriptionPokemon: string
   height: number
+  isSpecial?:boolean
 }
 export interface IEvolutionChain {
   completeEvolvingChain :ChainEvolution[]
+}
+export interface IPokemonInfo{
+  name:string
+  pokedexNumber: number
+  types:PokemonType[]
+  image: SpriteMap
+  height: number
+  isSpecial?:boolean
 }
 
 export interface ChainEvolution {
@@ -71,4 +80,26 @@ export const pokemonTypeColors: TPokemonTypeColors = {
   dragon:   "shadow border-1  bg-gradient-to-b from-purple-400  via-purple-600 to-purple-400   font-bold pokemonType",
   dark:     "shadow border-1  bg-gradient-to-b from-gray-400  via-gray-600 to-gray-400  font-bold pokemonType",
   steel:    "shadow border-1  bg-gradient-to-b from-slate-400  via-slate-600 to-slate-400  font-bold pokemonType",
+};
+
+export const pokemonTextColorByType: TPokemonTypeColors = {
+ 
+  grass: "   text-green-400   pokemonType  ",
+  poison: "   text-purple-400   pokemonType",
+  fire: "   text-red-400     pokemonType",
+  water: "   text-blue-400     pokemonType",
+  electric: "   text-yellow-400  pokemonType",
+  bug: "   text-lime-400     pokemonType",
+  normal: "   text-gray-400  pokemonType",
+  ground: "   text-yellow-400   pokemonType",
+  fairy: "   text-pink-400  pokemonType",
+  flying: "   text-sky-400   pokemonType",
+  psychic: "   text-pink-400  pokemonType",
+  fighting: "   text-orange-400  pokemonType",
+  rock: "   text-stone-400   pokemonType",
+  ghost: "   text-indigo-400   pokemonType",
+  ice: "   text-cyan-400   pokemonType",
+  dragon: "   text-purple-400   pokemonType",
+  dark: "   text-gray-400  pokemonType",
+  steel: "   text-slate-400   pokemonType",
 };

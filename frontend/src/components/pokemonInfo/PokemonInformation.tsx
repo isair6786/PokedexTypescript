@@ -1,119 +1,34 @@
-import { useEffect, useState } from "react";
-import { IEvolutionChain, IPokemon, pokemonTypeColors } from "../../interfaces/IPokemonData";
+import {  useState } from "react";
+import { pokemonTypeColors } from "../../interfaces/IPokemonData";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { motion } from "motion/react";
 import { PiSparkleLight, PiSparkleFill } from "react-icons/pi";
 import PokemonEvolution from "./PokemonEvolution";
 import { TiArrowRightThick } from "react-icons/ti";
+import usePokemonInfo from "../../hooks/usePokemonInfo";
+import useEvolutionChain from "../../hooks/useEvolutionChain";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/stores/pokemonStore";
+import Loading from "../animations/Loading";
 
 export default function PokemonInfo() {
-    const [pokemon, setPokemon] = useState<IPokemon>()
-    const [evolutionChain, setEvolutionChain] = useState<IEvolutionChain>()
-
-    const fillData = async () => {
-        setPokemon({
-            "cries": "https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/6.ogg",
-            "abilities": [
-                {
-                    "name": "blaze",
-                    "isHidden": false
-                },
-                {
-                    "name": "solar-power",
-                    "isHidden": true
-                }
-            ],
-            "image": {
-                "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/6.gif",
-                "back_female": null,
-                "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/shiny/6.gif",
-                "back_shiny_female": null,
-                "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif",
-                "front_female": null,
-                "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/6.gif",
-                "front_shiny_female": null
-            },
-            "name": "charizard",
-            "pokedexNumber": 6,
-            "types": [
-                "fire",
-                "flying"
-            ],
-            "weight": 905,
-            "genera": "Flame Pokémon",
-            "descriptionPokemon": "It is said that Charizard’s fire\nburns hotter if it has\nexperienced harsh battles.",
-            "height": 17
-        })
-        setEvolutionChain({
-            "completeEvolvingChain": [
-                {
-                    "pokemon": "charmander",
-                    "evolution_details": [],
-                    "ImagesUrls": {
-                        "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/4.gif",
-                        "back_female": null,
-                        "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/shiny/4.gif",
-                        "back_shiny_female": null,
-                        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/4.gif",
-                        "front_female": null,
-                        "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/4.gif",
-                        "front_shiny_female": null
-                    }
-                },
-                {
-                    "pokemon": "charmeleon",
-                    "evolution_details": [
-                        {
-                            "trigger": "level up"
-                        }
-                    ],
-                    "ImagesUrls": {
-                        "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/5.gif",
-                        "back_female": null,
-                        "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/shiny/5.gif",
-                        "back_shiny_female": null,
-                        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/5.gif",
-                        "front_female": null,
-                        "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/5.gif",
-                        "front_shiny_female": null
-                    }
-                },
-                {
-                    "pokemon": "charizard",
-                    "evolution_details": [
-                        {
-                            "trigger": "level up"
-                        }
-                    ],
-                    "ImagesUrls": {
-                        "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/6.gif",
-                        "back_female": null,
-                        "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/shiny/6.gif",
-                        "back_shiny_female": null,
-                        "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif",
-                        "front_female": null,
-                        "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/6.gif",
-                        "front_shiny_female": null
-                    }
-                }
-            ]
-        })
-    }
-    useEffect(() => {
-        (async () => { await fillData() })();
-    }, [])
-
+   
     const [showShiny, isShowShiny] = useState(false)
+    const idPokemon = useSelector((state: RootState) => state.pokemon.idPokemon);
+    
+    const {data:pokemon,isLoading:isLoadingPokemon,error:ErrorPokemon} = usePokemonInfo(idPokemon||0)
+    const {data:evolutionChain}  = useEvolutionChain(idPokemon||0)
 
-    if (!pokemon) return <>Loading</>
+    if(ErrorPokemon) return <>Error on load pokemon info...</>
 
     return (<>
 
-
+        <div className="flex flex-col justify-around items-center bg-white mt-25 rounded-2xl md:shadow  xl:h-[850px] 2xl:h-[850px]">
+        {!idPokemon? <p className="text-gray-400 text-2xl "> Select a Pokemon</p>:<></>}
+        {isLoadingPokemon? <Loading />:<></>}
         {pokemon ? (<>
-            <div className="flex flex-col justify-around items-center bg-white mt-25 rounded-2xl shadow">
-
-                <div className={`${pokemon.height < 8 ? 'w-15' : pokemon.height < 16 ? 'w-25' : 'w-40'} -mt-20`}>
+           
+                <div className={`${!pokemon.isSpecial? pokemon.height < 8 ? 'w-17 -mt-10' : pokemon.height < 16 ? 'w-25 -mt-15' : 'w-40 -mt-20':'w-50'}`}>
                     <img
                         className="w-full h-auto object-contain transition-all"
                         src={showShiny ? pokemon.image.front_shiny || '' : pokemon.image.front_default || ''}
@@ -186,21 +101,20 @@ export default function PokemonInfo() {
 
                 </div>
                 <p className="text-center text-lg font-bold text-gray-600 mt-8">Evolution Chain</p>
-                <div className="flex flex-row justify-center items-center mb-5 p-4">
+                <div className="flex flex-row justify-center items-start pb-5 px-4 mt-auto">
                     {evolutionChain ? (evolutionChain.completeEvolvingChain.map((evolution,index) => {
-                        return <div className="flex flex-row justify-center items-center ">
+                        return <div className="flex flex-row justify-center items-end mb-5 ">
                                     <PokemonEvolution key={index} pokemon={evolution.pokemon} ImagesUrls={evolution.ImagesUrls} isShiny={showShiny} index={index} /> 
-                                    {index+1!=evolutionChain.completeEvolvingChain.length?(<TiArrowRightThick className="text-black" size={35}/>):(<></>)}
+                                    {index+1!=evolutionChain.completeEvolvingChain.length?(<TiArrowRightThick className="text-black mb-5" size={35}/>):(<></>)}
                                 </div>
-                    })) : (<></>)}
+                    })) : (<p className="text-gray-400"> No Data</p>)}
                 </div>
-            </div>
 
 
         </>) :
             (<></>)
         }
-
+      </div>
     </>);
 
 }

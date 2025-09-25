@@ -10,6 +10,7 @@ export interface IPokemon {
     genera:string,
     descriptionPokemon:string
     height:number
+    isSpecial?: boolean
 }
 export interface SpriteMap {
     [key: string]: string | null;

@@ -11,13 +11,14 @@ export const findPokemonById = async (req: Request, res: Response) => {
         const pokemonId: number = Number.parseInt(req.query.idPokemon.toString());
         const rawPokemonData = await getPokemonById(pokemonId) as any
         const rawGenera = await getPokemonSpeciesById(pokemonId) as any
-        const formatGenera = rawGenera.genera.find((g) => g.language.name === "en")?.genus ?? "";
-
-        const { flavor_text: descriptionPokemon } = rawGenera.flavor_text_entries.filter(
+        const formatGenera = rawGenera?.genera.find((g) => g.language.name === "en")?.genus ?? "";
+        const  flavor_text = rawGenera?.flavor_text_entries.filter(
             (entry) => entry.language.name === "en" && entry.version.name === "black"
-        )?.[0] ?? '';
-
+        )?.[0];
+        const descriptionPokemon = flavor_text?.flavor_text || 'No description'
+        console.log(flavor_text)
         const pokemonData = await formatPokemonData({ ...rawPokemonData, genera: formatGenera ,descriptionPokemon})
+        
         res.status(200).json(pokemonData)
         return;
     } catch (error) {
@@ -129,7 +130,7 @@ export const getEvolvingChainbyPokemonId = async (req: Request, res: Response) =
             newError = new Error(`An error ocurred while getting all pokemons`)
 
         }
-        res.status(400).send(newError)
+        res.status(400).json(newError)
         return;
     }
 }
@@ -190,8 +191,12 @@ const formatPokemonData = async (rawPokemonData: any) => {
     const { abilities, cries, id, name, genera,descriptionPokemon, height,weight, types, sprites: { versions } } = rawPokemonData
     const abilitiesArray = abilities.map((data) => { return { "name": data.ability.name, "isHidden": data.is_hidden } })
     const typesArray = types.map(({ type }) => { return type.name })
-    const imagesArray: SpriteMap = versions["generation-v"]["black-white"]["animated"]
-
+    var imagesArray: SpriteMap = versions["generation-v"]["black-white"]["animated"]
+    var isSpecial = false
+    if(imagesArray.front_default===null && imagesArray.front_shiny ===null){
+         imagesArray = versions["generation-v"]["black-white"]
+         isSpecial = true
+    }
     const pokemonData: IPokemon = {
         cries: cries.latest,
         abilities: abilitiesArray,
@@ -202,7 +207,8 @@ const formatPokemonData = async (rawPokemonData: any) => {
         weight,
         genera,
         descriptionPokemon,
-        height
+        height,
+        isSpecial
     }
     return pokemonData;
 }
