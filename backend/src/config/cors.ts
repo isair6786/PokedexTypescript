@@ -4,10 +4,11 @@ export const corsConfig:CorsOptions = {
         const whiteList : (string | undefined)[]  = process.env.WHITELIST_URL?.split(";") || []
         
         //To enable the use of tool of API Testing like Postman
-        if (process.argv.includes("--api")){
-            whiteList.push(undefined)
-        }
-        console.log(process.argv)
+        // if (process.argv.includes("--api")){
+        //     whiteList.push(undefined)
+        // }
+        // console.log(process.argv)
+        //Add a undefined to enable the use of tool of API Testing like Postman
         whiteList.push(undefined)
        
         if ( whiteList.includes(requestOrigin)){
